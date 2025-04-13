@@ -21,12 +21,12 @@ const SkillsSection = () => {
     {
       title: "Programming Languages",
       icon: <Code className="w-10 h-10 text-teal" />,
-      skills: ["JavaScript", "TypeScript", "Python", "PHP", "Ruby", "Java"]
+      skills: ["JavaScript", "TypeScript", "Python", "Java"]
     },
     {
       title: "Database",
       icon: <Database className="w-10 h-10 text-teal" />,
-      skills: ["PostgreSQL", "MongoDB", "MySQL", "Redis", "Firebase", "Supabase"]
+      skills: ["PostgreSQL", "MongoDB", "MySQL"]
     },
     {
       title: "Web Technologies",
@@ -36,7 +36,7 @@ const SkillsSection = () => {
     {
       title: "Other Skills",
       icon: <Brain className="w-10 h-10 text-teal" />,
-      skills: ["Git", "Docker", "CI/CD", "Agile", "Jest", "Figma"]
+      skills: ["Git", "Postman", "Vercal", "Netlify"]
     }
   ];
 

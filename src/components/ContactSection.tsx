@@ -62,26 +62,26 @@ const ContactSection = () => {
             <div className="space-y-4">
               <div className="flex items-center">
                 <Mail className="text-teal mr-3" size={20} />
-                <span>john.doe@example.com</span>
+                <span>ayushgupta83681@gmail.com</span>
               </div>
               <div className="flex items-center">
                 <Phone className="text-teal mr-3" size={20} />
-                <span>+1 (555) 123-4567</span>
+                <span>+91 9310227752</span>
               </div>
               <div className="flex items-center">
                 <MapPin className="text-teal mr-3" size={20} />
-                <span>San Francisco, CA</span>
+                <span>Ghaziabad, India</span>
               </div>
             </div>
             
             <div className="flex space-x-4">
-              <a href="#" className="p-3 bg-navy-light rounded-full text-white hover:text-teal transition-colors" aria-label="GitHub">
+              <a href="https://github.com/ayushgupta010" className="p-3 bg-navy-light rounded-full text-white hover:text-teal transition-colors" aria-label="GitHub">
                 <Github size={20} />
               </a>
-              <a href="#" className="p-3 bg-navy-light rounded-full text-white hover:text-teal transition-colors" aria-label="LinkedIn">
+              <a href="https://linkedin.com/in/ayush-guptaa0001/" className="p-3 bg-navy-light rounded-full text-white hover:text-teal transition-colors" aria-label="LinkedIn">
                 <Linkedin size={20} />
               </a>
-              <a href="#" className="p-3 bg-navy-light rounded-full text-white hover:text-teal transition-colors" aria-label="Twitter">
+              <a href="https://x.com/home?utm_source=homescreen&utm_medium=shortcut" className="p-3 bg-navy-light rounded-full text-white hover:text-teal transition-colors" aria-label="Twitter">
                 <Twitter size={20} />
               </a>
             </div>

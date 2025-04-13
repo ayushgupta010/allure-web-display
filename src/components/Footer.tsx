@@ -8,7 +8,7 @@ const Footer = () => {
     <footer className="bg-navy-dark text-white/70 py-8 px-6 text-center">
       <div className="container max-w-5xl mx-auto">
         <p>
-          &copy; {currentYear} John Doe. All rights reserved.
+          &copy; {2025} Ayush Gupta. All rights reserved.
         </p>
         <p className="mt-2 text-sm">
           Built with React, TypeScript, and TailwindCSS.

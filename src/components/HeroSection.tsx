@@ -36,21 +36,21 @@ const HeroSection = () => {
           
           <h1 
             ref={el => itemsRef.current[1] = el}
-            className="text-4xl md:text-6xl font-bold text-white"
+            className="text-4xl md:text-6xl font-bold text-emerald-300"
           >
-            John Doe.
+            Ayush Gupta.
           </h1>
           
           <h2 
             ref={el => itemsRef.current[2] = el}
-            className="text-3xl md:text-5xl font-bold text-white/70"
+            className="text-3xl md:text-5xl font-bold text-emerald-200"
           >
             I build things for the web.
           </h2>
           
           <p 
             ref={el => itemsRef.current[3] = el}
-            className="max-w-lg text-lg text-white/70"
+            className="max-w-lg text-lg text-emerald-200"
           >
             I'm a web developer specializing in building exceptional digital experiences. 
             Currently, I'm focused on building accessible, human-centered products.

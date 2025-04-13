@@ -27,24 +27,22 @@ const AboutSection = () => {
           )}
           style={{ animationDelay: '200ms' }}
           >
-            <p className="text-lg">
-              Hello! I'm John, a passionate web developer based in San Francisco, CA. I enjoy creating beautiful,
+            <p className="text-lg text-black">
+              Hello! I'm Ayush Gupta, a passionate web developer. I enjoy creating beautiful,
               functional websites and applications that deliver exceptional user experiences.
             </p>
             
             <p>
-              I graduated from the University of California with a degree in Computer Science in 2020. 
-              Since then, I've been working with a diverse range of clients from startups to large corporations.
+              I am currently pursuing my Bachelor's degree in Computer Science and Engineering from Ajay Kumar Garg Engineering College, Ghaziabad.
+              In addition to my studies, I have a keen interest in web development and design.
+              I have experience with various technologies including HTML, CSS, JavaScript, React, and Node.js.
             </p>
             
             <p>
               My goal is to build products that are not only visually appealing but also accessible and performant.
               I believe in clean code, user-centered design, and continuous learning.
             </p>
-            
-            <p>
-              When I'm not coding, you can find me hiking, reading science fiction, or exploring new coffee shops.
-            </p>
+
           </div>
           
           <div className={cn(
@@ -57,7 +55,7 @@ const AboutSection = () => {
               <div className="absolute inset-0 bg-teal/20 z-10 rounded-md"></div>
               <div className="absolute inset-0 border-2 border-teal rounded-md translate-x-4 translate-y-4 z-0"></div>
               <img 
-                src="https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?auto=format&fit=crop&q=80"
+                src="public\20250317_101456.jpg"
                 alt="John Doe" 
                 className="object-cover w-full h-full rounded-md z-0 grayscale hover:grayscale-0 transition-all duration-300"
               />
