@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -29,28 +28,28 @@ const HeroSection = () => {
         <div className="space-y-8">
           <p 
             ref={el => itemsRef.current[0] = el} 
-            className="font-mono text-teal"
+            className="font-mono text-black"
           >
             Hello, my name is
           </p>
           
           <h1 
             ref={el => itemsRef.current[1] = el}
-            className="text-4xl md:text-6xl font-bold text-emerald-300"
+            className="text-4xl md:text-6xl font-bold text-black"
           >
             Ayush Gupta.
           </h1>
           
           <h2 
             ref={el => itemsRef.current[2] = el}
-            className="text-3xl md:text-5xl font-bold text-emerald-200"
+            className="text-3xl md:text-5xl font-bold text-black"
           >
             I build things for the web.
           </h2>
           
           <p 
             ref={el => itemsRef.current[3] = el}
-            className="max-w-lg text-lg text-emerald-200"
+            className="max-w-lg text-lg text-black"
           >
             I'm a web developer specializing in building exceptional digital experiences. 
             Currently, I'm focused on building accessible, human-centered products.
@@ -59,7 +58,7 @@ const HeroSection = () => {
           <div ref={el => itemsRef.current[4] = el}>
             <Button 
               asChild
-              className="bg-transparent hover:bg-teal/10 text-teal border border-teal rounded-md mt-8 px-8 py-6"
+              className="bg-transparent hover:bg-black/10 text-black border border-black rounded-md mt-8 px-8 py-6"
             >
               <a href="#contact">Get In Touch</a>
             </Button>
@@ -69,7 +68,7 @@ const HeroSection = () => {
       
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce cursor-pointer">
         <a href="#about" aria-label="Scroll down">
-          <ChevronDown size={32} className="text-teal" />
+          <ChevronDown size={32} className="text-black" />
         </a>
       </div>
     </section>
