@@ -13,8 +13,11 @@ console.log('EMAIL_USER:', process.env.EMAIL_USER ? 'Defined' : 'Undefined');
 console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD ? 'Defined' : 'Undefined');
 console.log('RECIPIENT_EMAIL:', process.env.RECIPIENT_EMAIL ? 'Defined' : 'Undefined');
 
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
+
 const app = express();
-app.use(cors());
+// Allow only the configured frontend to call the API
+app.use(cors({ origin: FRONTEND_ORIGIN }));
 app.use(express.json());
 
 // Create email transporter
