@@ -27,49 +27,48 @@ const ContactSection = () => {
       const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3000';
       console.log('Attempting to send message to:', `${apiBase}/send-message`);
       
-      // First, check if backend is reachable
+      // Create AbortController for better timeout control
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 second timeout for Render cold starts
+      
       try {
-        const healthCheck = await fetch(`${apiBase}/health`, {
-          method: 'GET',
-          signal: AbortSignal.timeout(5000) // 5 second timeout
+        const response = await fetch(`${apiBase}/send-message`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            message: formData.message
+          }),
+          signal: controller.signal
         });
-        if (!healthCheck.ok) {
-          throw new Error(`Backend health check failed: ${healthCheck.status}`);
+        
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+          toast.success('Message sent successfully! You will receive it in your email inbox.');
+          setFormData({ name: '', email: '', message: '' });
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          const errorMessage = errorData.details || errorData.error || `Server returned error: ${response.status}`;
+          console.error('Server error:', errorData);
+          toast.error(errorMessage);
         }
-        console.log('Backend health check passed');
-      } catch (healthError) {
-        console.error('Backend health check failed:', healthError);
-        throw new Error(`Cannot connect to backend server at ${apiBase}. Please make sure the server is running.`);
-      }
-      
-      const response = await fetch(`${apiBase}/send-message`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          message: formData.message
-        }),
-        signal: AbortSignal.timeout(30000) // 30 second timeout
-      });
-      
-      if (response.ok) {
-        toast.success('Message sent successfully! You will receive it in your email inbox.');
-        setFormData({ name: '', email: '', message: '' });
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.details || errorData.error || `Server returned error: ${response.status}`;
-        console.error('Server error:', errorData);
-        toast.error(errorMessage);
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+        throw fetchError;
       }
     } catch (error) {
       console.error('Error sending message:', error);
       let errorMessage = 'An error occurred. ';
       
-      if (error instanceof TypeError && error.message.includes('fetch')) {
-        errorMessage += `Cannot connect to backend server. Please check:
+      // Handle timeout errors specifically
+      if (error instanceof Error && error.name === 'AbortError') {
+        errorMessage = 'Request timed out. The server may be starting up (this can take up to 60 seconds on free tier). Please try again in a moment.';
+      } else if (error instanceof TypeError && error.message.includes('fetch')) {
+        errorMessage = `Cannot connect to backend server. Please check:
         1. Is the backend server running? (Run: npm run server)
         2. Is it running on port 3000?
         3. Check the backend URL: ${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`;
