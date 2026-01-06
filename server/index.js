@@ -20,10 +20,11 @@ console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD ? 'Defined' : 'Undefin
 console.log('RECIPIENT_EMAIL:', process.env.RECIPIENT_EMAIL ? 'Defined' : 'Undefined');
 console.log('FRONTEND_ORIGIN:', process.env.FRONTEND_ORIGIN || 'Not set (using defaults)');
 
-// Allow multiple origins for local development
+// Allow multiple origins for local development and production
+const localOrigins = ['http://localhost:5173', 'http://localhost:8080', 'http://localhost:8081', 'http://localhost:3000'];
 const allowedOrigins = process.env.FRONTEND_ORIGIN 
-  ? [process.env.FRONTEND_ORIGIN]
-  : ['http://localhost:5173', 'http://localhost:8080', 'http://localhost:8081', 'http://localhost:3000'];
+  ? [...localOrigins, process.env.FRONTEND_ORIGIN] // Include both local and production origins
+  : localOrigins; // Default to local origins only
 
 const app = express();
 
