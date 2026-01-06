@@ -96,13 +96,22 @@ app.post('/send-message', async (req, res) => {
 
     // Validate environment variables
     if (!process.env.EMAIL_USER) {
-      throw new Error('EMAIL_USER is not defined in environment variables');
+      return res.status(500).json({ 
+        error: 'Server configuration error', 
+        details: 'EMAIL_USER is not defined in environment variables' 
+      });
     }
     if (!process.env.EMAIL_PASSWORD) {
-      throw new Error('EMAIL_PASSWORD is not defined in environment variables');
+      return res.status(500).json({ 
+        error: 'Server configuration error', 
+        details: 'EMAIL_PASSWORD is not defined in environment variables' 
+      });
     }
     if (!process.env.RECIPIENT_EMAIL) {
-      throw new Error('RECIPIENT_EMAIL is not defined in environment variables');
+      return res.status(500).json({ 
+        error: 'Server configuration error', 
+        details: 'RECIPIENT_EMAIL is not defined in environment variables' 
+      });
     }
 
     // Email options
@@ -123,15 +132,24 @@ app.post('/send-message', async (req, res) => {
       subject: mailOptions.subject
     }));
 
-    // Send email
-    await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully');
-    res.status(200).json({ message: 'Message sent successfully' });
+    // Respond immediately to client, then send email in background
+    res.status(200).json({ message: 'Message received and will be sent shortly' });
+
+    // Send email asynchronously (don't await - let it run in background)
+    transporter.sendMail(mailOptions)
+      .then(() => {
+        console.log('Email sent successfully');
+      })
+      .catch((error) => {
+        console.error('Error sending email (background):', error);
+        // Email sending failed, but client already got success response
+        // In production, you might want to log this to a service like Sentry
+      });
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Error processing message:', error);
     const errorMessage = error.message || 'Unknown error occurred';
     res.status(500).json({ 
-      error: 'Failed to send message', 
+      error: 'Failed to process message', 
       details: errorMessage 
     });
   }
