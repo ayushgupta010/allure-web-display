@@ -37,7 +37,7 @@ const ContactSection = () => {
       });
       
       if (response.ok) {
-        toast.success('Message sent successfully! You will receive it in your email inbox.');
+        toast.success('Message sent successfully!');
         setFormData({ name: '', email: '', message: '' });
       } else {
         toast.error('Failed to send message. Please try again later.');
