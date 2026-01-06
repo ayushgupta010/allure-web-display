@@ -3,22 +3,69 @@ import { createServer } from 'http';
 import cors from 'cors';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-// Load environment variables
-dotenv.config();
+// Get current directory (ES modules compatible)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Load environment variables from parent directory (root of project)
+dotenv.config({ path: join(__dirname, '..', '.env') });
 
 // Verify environment variables are loaded
 console.log('Environment variables loaded:');
 console.log('EMAIL_USER:', process.env.EMAIL_USER ? 'Defined' : 'Undefined');
 console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD ? 'Defined' : 'Undefined');
 console.log('RECIPIENT_EMAIL:', process.env.RECIPIENT_EMAIL ? 'Defined' : 'Undefined');
+console.log('FRONTEND_ORIGIN:', process.env.FRONTEND_ORIGIN || 'Not set (using defaults)');
 
-const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
+// Allow multiple origins for local development
+const allowedOrigins = process.env.FRONTEND_ORIGIN 
+  ? [process.env.FRONTEND_ORIGIN]
+  : ['http://localhost:5173', 'http://localhost:8080', 'http://localhost:8081', 'http://localhost:3000'];
 
 const app = express();
-// Allow only the configured frontend to call the API
-app.use(cors({ origin: FRONTEND_ORIGIN }));
+
+// Request logging middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path} - Origin: ${req.get('origin') || 'none'}`);
+  next();
+});
+
+// CORS configuration - allow multiple origins for local dev
+app.use(cors({ 
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      console.log('Request with no origin - allowing');
+      return callback(null, true);
+    }
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      console.log(`CORS allowed for origin: ${origin}`);
+      callback(null, true);
+    } else {
+      console.warn(`CORS blocked origin: ${origin}. Allowed origins:`, allowedOrigins);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json());
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'ok', 
+    message: 'Server is running',
+    env: {
+      emailUser: process.env.EMAIL_USER ? 'Defined' : 'Undefined',
+      emailPassword: process.env.EMAIL_PASSWORD ? 'Defined' : 'Undefined',
+      recipientEmail: process.env.RECIPIENT_EMAIL ? 'Defined' : 'Undefined',
+      frontendOrigin: process.env.FRONTEND_ORIGIN || 'Not set (using defaults)'
+    }
+  });
+});
 
 // Create email transporter
 const transporter = nodemailer.createTransport({
@@ -34,19 +81,33 @@ app.post('/send-message', async (req, res) => {
   try {
     const { name, email, message } = req.body;
     
+    // Validate required fields
+    if (!name || !email || !message) {
+      return res.status(400).json({ 
+        error: 'Missing required fields', 
+        details: 'Name, email, and message are required' 
+      });
+    }
+    
     console.log('Received message from:', name);
     console.log('Sender email:', email);
     console.log('Recipient email:', process.env.RECIPIENT_EMAIL);
 
-    // Make sure recipient email is defined
+    // Validate environment variables
+    if (!process.env.EMAIL_USER) {
+      throw new Error('EMAIL_USER is not defined in environment variables');
+    }
+    if (!process.env.EMAIL_PASSWORD) {
+      throw new Error('EMAIL_PASSWORD is not defined in environment variables');
+    }
     if (!process.env.RECIPIENT_EMAIL) {
-      throw new Error('Recipient email is not defined in environment variables');
+      throw new Error('RECIPIENT_EMAIL is not defined in environment variables');
     }
 
     // Email options
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: process.env.RECIPIENT_EMAIL,  // Your email where you want to receive messages
+      to: process.env.RECIPIENT_EMAIL,
       subject: `New Message from ${name}`,
       text: `
         Name: ${name}
@@ -67,7 +128,11 @@ app.post('/send-message', async (req, res) => {
     res.status(200).json({ message: 'Message sent successfully' });
   } catch (error) {
     console.error('Error sending email:', error);
-    res.status(500).json({ error: 'Failed to send message', details: error.message });
+    const errorMessage = error.message || 'Unknown error occurred';
+    res.status(500).json({ 
+      error: 'Failed to send message', 
+      details: errorMessage 
+    });
   }
 });
 

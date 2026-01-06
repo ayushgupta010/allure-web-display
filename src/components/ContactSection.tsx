@@ -25,6 +25,23 @@ const ContactSection = () => {
     
     try {
       const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      console.log('Attempting to send message to:', `${apiBase}/send-message`);
+      
+      // First, check if backend is reachable
+      try {
+        const healthCheck = await fetch(`${apiBase}/health`, {
+          method: 'GET',
+          signal: AbortSignal.timeout(5000) // 5 second timeout
+        });
+        if (!healthCheck.ok) {
+          throw new Error(`Backend health check failed: ${healthCheck.status}`);
+        }
+        console.log('Backend health check passed');
+      } catch (healthError) {
+        console.error('Backend health check failed:', healthError);
+        throw new Error(`Cannot connect to backend server at ${apiBase}. Please make sure the server is running.`);
+      }
+      
       const response = await fetch(`${apiBase}/send-message`, {
         method: 'POST',
         headers: {
@@ -34,18 +51,35 @@ const ContactSection = () => {
           name: formData.name,
           email: formData.email,
           message: formData.message
-        })
+        }),
+        signal: AbortSignal.timeout(30000) // 30 second timeout
       });
       
       if (response.ok) {
-        toast.success('Message sent successfully!');
+        toast.success('Message sent successfully! You will receive it in your email inbox.');
         setFormData({ name: '', email: '', message: '' });
       } else {
-        toast.error('Failed to send message. Please try again later.');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.details || errorData.error || `Server returned error: ${response.status}`;
+        console.error('Server error:', errorData);
+        toast.error(errorMessage);
       }
     } catch (error) {
       console.error('Error sending message:', error);
-      toast.error('An error occurred. Please try again later.');
+      let errorMessage = 'An error occurred. ';
+      
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        errorMessage += `Cannot connect to backend server. Please check:
+        1. Is the backend server running? (Run: npm run server)
+        2. Is it running on port 3000?
+        3. Check the backend URL: ${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`;
+      } else if (error instanceof Error) {
+        errorMessage += error.message;
+      } else {
+        errorMessage += 'Please check if the backend server is running.';
+      }
+      
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
