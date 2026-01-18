@@ -1,7 +1,7 @@
 import express from 'express';
 import { createServer } from 'http';
 import cors from 'cors';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -15,8 +15,7 @@ dotenv.config({ path: join(__dirname, '..', '.env') });
 
 // Verify environment variables are loaded
 console.log('Environment variables loaded:');
-console.log('EMAIL_USER:', process.env.EMAIL_USER ? 'Defined' : 'Undefined');
-console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD ? 'Defined' : 'Undefined');
+console.log('RESEND_API_KEY:', process.env.RESEND_API_KEY ? 'Defined' : 'Undefined');
 console.log('RECIPIENT_EMAIL:', process.env.RECIPIENT_EMAIL ? 'Defined' : 'Undefined');
 console.log('FRONTEND_ORIGIN:', process.env.FRONTEND_ORIGIN || 'Not set (using defaults)');
 
@@ -60,36 +59,21 @@ app.get('/health', (req, res) => {
     status: 'ok', 
     message: 'Server is running',
     env: {
-      emailUser: process.env.EMAIL_USER ? 'Defined' : 'Undefined',
-      emailPassword: process.env.EMAIL_PASSWORD ? 'Defined' : 'Undefined',
+      resendApiKey: process.env.RESEND_API_KEY ? 'Defined' : 'Undefined',
       recipientEmail: process.env.RECIPIENT_EMAIL ? 'Defined' : 'Undefined',
       frontendOrigin: process.env.FRONTEND_ORIGIN || 'Not set (using defaults)'
     }
   });
 });
 
-// Create email transporter with better error handling
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD
-  },
-  // Add connection timeout and other options
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 10000
-});
+// Initialize Resend
+if (!process.env.RESEND_API_KEY) {
+  console.warn('⚠️  RESEND_API_KEY is not defined. Email sending will fail.');
+} else {
+  console.log('✅ Resend API key loaded');
+}
 
-// Verify transporter configuration on startup
-transporter.verify(function (error, success) {
-  if (error) {
-    console.error('❌ Email transporter verification FAILED:', error);
-    console.error('Error details:', JSON.stringify(error, null, 2));
-  } else {
-    console.log('✅ Email transporter is ready to send messages');
-  }
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // POST endpoint to receive messages
 app.post('/send-message', async (req, res) => {
@@ -109,16 +93,10 @@ app.post('/send-message', async (req, res) => {
     console.log('Recipient email:', process.env.RECIPIENT_EMAIL);
 
     // Validate environment variables
-    if (!process.env.EMAIL_USER) {
+    if (!process.env.RESEND_API_KEY) {
       return res.status(500).json({ 
         error: 'Server configuration error', 
-        details: 'EMAIL_USER is not defined in environment variables' 
-      });
-    }
-    if (!process.env.EMAIL_PASSWORD) {
-      return res.status(500).json({ 
-        error: 'Server configuration error', 
-        details: 'EMAIL_PASSWORD is not defined in environment variables' 
+        details: 'RESEND_API_KEY is not defined in environment variables' 
       });
     }
     if (!process.env.RECIPIENT_EMAIL) {
@@ -128,57 +106,47 @@ app.post('/send-message', async (req, res) => {
       });
     }
 
-    // Email options
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: process.env.RECIPIENT_EMAIL,
-      subject: `New Message from ${name}`,
-      text: `
-        Name: ${name}
-        Email: ${email}
-        Message: ${message}
-      `
-    };
+    console.log('Sending email via Resend...');
+    console.log('To:', process.env.RECIPIENT_EMAIL);
+    console.log('Subject: New Message from', name);
 
-    console.log('Sending email with options:', JSON.stringify({
-      from: mailOptions.from,
-      to: mailOptions.to,
-      subject: mailOptions.subject
-    }));
-
-    // Send email and wait for result before responding
+    // Send email using Resend
     try {
-      const emailResult = await transporter.sendMail(mailOptions);
+      const emailResult = await resend.emails.send({
+        from: 'Portfolio Contact <onboarding@resend.dev>', // Using Resend's test domain
+        to: process.env.RECIPIENT_EMAIL,
+        subject: `New Message from ${name}`,
+        text: `
+Name: ${name}
+Email: ${email}
+
+Message:
+${message}
+        `.trim()
+      });
+      
       console.log('✅ Email sent successfully!');
-      console.log('Email message ID:', emailResult.messageId);
-      console.log('Email response:', emailResult.response);
+      console.log('Email ID:', emailResult.id);
       
       res.status(200).json({ 
         message: 'Message sent successfully',
-        emailId: emailResult.messageId 
+        emailId: emailResult.id 
       });
     } catch (emailError) {
       console.error('❌ ERROR SENDING EMAIL:');
-      console.error('Error name:', emailError.name);
-      console.error('Error message:', emailError.message);
-      console.error('Error code:', emailError.code);
-      console.error('Error command:', emailError.command);
-      console.error('Full error:', JSON.stringify(emailError, null, 2));
+      console.error('Error:', emailError);
+      console.error('Error details:', JSON.stringify(emailError, null, 2));
       
-      // Common Gmail errors and solutions
-      let errorDetails = emailError.message;
-      if (emailError.code === 'EAUTH') {
-        errorDetails = 'Authentication failed. Check your EMAIL_PASSWORD (should be an app-specific password, not your regular password)';
-      } else if (emailError.code === 'ECONNECTION') {
-        errorDetails = 'Connection failed. Check your internet connection and Gmail settings';
-      } else if (emailError.code === 'ETIMEDOUT') {
-        errorDetails = 'Connection timed out. Gmail may be blocking the connection';
+      let errorDetails = emailError.message || 'Unknown error occurred';
+      if (emailError.name === 'MissingAPIKeyError') {
+        errorDetails = 'Resend API key is missing or invalid';
+      } else if (emailError.message?.includes('Invalid')) {
+        errorDetails = 'Invalid email configuration. Check your RESEND_API_KEY and RECIPIENT_EMAIL';
       }
       
       res.status(500).json({ 
         error: 'Failed to send email', 
-        details: errorDetails,
-        debug: process.env.NODE_ENV === 'development' ? emailError.message : undefined
+        details: errorDetails
       });
     }
   } catch (error) {
