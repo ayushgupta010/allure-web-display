@@ -68,12 +68,26 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Create email transporter
+// Create email transporter with better error handling
 const transporter = nodemailer.createTransport({
-  service: 'gmail',  // or your email service
+  service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER,     // Your email
-    pass: process.env.EMAIL_PASSWORD  // Your email password or app-specific password
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD
+  },
+  // Add connection timeout and other options
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000
+});
+
+// Verify transporter configuration on startup
+transporter.verify(function (error, success) {
+  if (error) {
+    console.error('❌ Email transporter verification FAILED:', error);
+    console.error('Error details:', JSON.stringify(error, null, 2));
+  } else {
+    console.log('✅ Email transporter is ready to send messages');
   }
 });
 
@@ -132,19 +146,41 @@ app.post('/send-message', async (req, res) => {
       subject: mailOptions.subject
     }));
 
-    // Respond immediately to client, then send email in background
-    res.status(200).json({ message: 'Message received and will be sent shortly' });
-
-    // Send email asynchronously (don't await - let it run in background)
-    transporter.sendMail(mailOptions)
-      .then(() => {
-        console.log('Email sent successfully');
-      })
-      .catch((error) => {
-        console.error('Error sending email (background):', error);
-        // Email sending failed, but client already got success response
-        // In production, you might want to log this to a service like Sentry
+    // Send email and wait for result before responding
+    try {
+      const emailResult = await transporter.sendMail(mailOptions);
+      console.log('✅ Email sent successfully!');
+      console.log('Email message ID:', emailResult.messageId);
+      console.log('Email response:', emailResult.response);
+      
+      res.status(200).json({ 
+        message: 'Message sent successfully',
+        emailId: emailResult.messageId 
       });
+    } catch (emailError) {
+      console.error('❌ ERROR SENDING EMAIL:');
+      console.error('Error name:', emailError.name);
+      console.error('Error message:', emailError.message);
+      console.error('Error code:', emailError.code);
+      console.error('Error command:', emailError.command);
+      console.error('Full error:', JSON.stringify(emailError, null, 2));
+      
+      // Common Gmail errors and solutions
+      let errorDetails = emailError.message;
+      if (emailError.code === 'EAUTH') {
+        errorDetails = 'Authentication failed. Check your EMAIL_PASSWORD (should be an app-specific password, not your regular password)';
+      } else if (emailError.code === 'ECONNECTION') {
+        errorDetails = 'Connection failed. Check your internet connection and Gmail settings';
+      } else if (emailError.code === 'ETIMEDOUT') {
+        errorDetails = 'Connection timed out. Gmail may be blocking the connection';
+      }
+      
+      res.status(500).json({ 
+        error: 'Failed to send email', 
+        details: errorDetails,
+        debug: process.env.NODE_ENV === 'development' ? emailError.message : undefined
+      });
+    }
   } catch (error) {
     console.error('Error processing message:', error);
     const errorMessage = error.message || 'Unknown error occurred';

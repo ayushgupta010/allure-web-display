@@ -52,12 +52,10 @@ const AboutSection = () => {
           style={{ animationDelay: '400ms' }}
           >
             <div className="relative rounded-md overflow-hidden aspect-square">
-              <div className="absolute inset-0 bg-teal/20 z-10 rounded-md"></div>
-              <div className="absolute inset-0 border-2 border-teal rounded-md translate-x-4 translate-y-4 z-0"></div>
               <img 
-                src="public\20250317_101456.jpg"
-                alt="John Doe" 
-                className="object-cover w-full h-full rounded-md z-0 grayscale hover:grayscale-0 transition-all duration-300"
+                src="/20250317_101456.jpg"
+                alt="Ayush Gupta" 
+                className="object-cover w-full h-full rounded-md"
               />
             </div>
           </div>
