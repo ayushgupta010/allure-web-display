@@ -88,17 +88,23 @@ const ContactSection = () => {
     <section
       id="contact"
       ref={sectionRef}
-      className="py-24 px-6 bg-navy text-white"
+      className="py-24 px-6 bg-navy text-slate-lightest"
     >
       <div className="container max-w-5xl mx-auto">
-        <h2 className={cn(
-          "section-heading text-white after:bg-navy-light",
-          isVisible ? "animate-fade-in" : "opacity-0"
-        )}>
-          Get In Touch
-        </h2>
+        
+        <div className="text-center mb-16">
+            <h2 className={cn(
+            "text-3xl md:text-5xl font-bold text-slate-lightest mb-6",
+            isVisible ? "animate-fade-in" : "opacity-0"
+            )}>
+            Get In Touch
+            </h2>
+            <p className="max-w-xl mx-auto text-slate text-lg">
+                I'm currently looking for new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!
+            </p>
+        </div>
 
-        <div className="grid md:grid-cols-2 gap-12 mt-12">
+        <div className="grid md:grid-cols-2 gap-12 mt-12 bg-navy-light p-8 md:p-12 rounded-2xl shadow-2xl">
           <div 
             className={cn(
               "space-y-8",
@@ -106,49 +112,69 @@ const ContactSection = () => {
             )}
             style={{ animationDelay: '200ms' }}
           >
-            <p className="text-white/80 text-lg">
-              I'm currently looking for new opportunities. Whether you have a question
-              or just want to say hi, I'll do my best to get back to you!
-            </p>
+            <div>
+                <h3 className="text-2xl font-bold text-slate-lightest mb-4">Let's build something great together.</h3>
+                <p className="text-slate">
+                    Feel free to reach out if you're looking for a developer, have a question, or just want to connect.
+                </p>
+            </div>
             
-            <div className="space-y-4">
-              <div className="flex items-center">
-                <Mail className="text-teal mr-3" size={20} />
-                <span>ayushgupta83681@gmail.com</span>
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-blue/10 rounded-full text-blue">
+                    <Mail size={20} />
+                </div>
+                <div>
+                    <p className="text-sm text-slate">Email</p>
+                    <a href="mailto:ayushgupta83681@gmail.com" className="text-slate-lightest hover:text-blue transition-colors">ayushgupta83681@gmail.com</a>
+                </div>
               </div>
-              <div className="flex items-center">
-                <Phone className="text-teal mr-3" size={20} />
-                <span>+91 9310227752</span>
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-blue/10 rounded-full text-blue">
+                    <Phone size={20} />
+                </div>
+                <div>
+                   <p className="text-sm text-slate">Phone</p>
+                   <a href="tel:+919310227752" className="text-slate-lightest hover:text-blue transition-colors">+91 9310227752</a>
+                </div>
               </div>
-              <div className="flex items-center">
-                <MapPin className="text-teal mr-3" size={20} />
-                <span>Ghaziabad, India</span>
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-blue/10 rounded-full text-blue">
+                    <MapPin size={20} />
+                </div>
+                <div>
+                    <p className="text-sm text-slate">Location</p>
+                    <span className="text-slate-lightest">Ghaziabad, India</span>
+                </div>
               </div>
             </div>
             
-            <div className="flex space-x-4">
-              <a href="https://github.com/ayushgupta010" className="p-3 bg-navy-light rounded-full text-white hover:text-teal transition-colors" aria-label="GitHub">
-                <Github size={20} />
-              </a>
-              <a href="https://linkedin.com/in/ayush-guptaa0001/" className="p-3 bg-navy-light rounded-full text-white hover:text-teal transition-colors" aria-label="LinkedIn">
-                <Linkedin size={20} />
-              </a>
-              <a href="https://x.com/home?utm_source=homescreen&utm_medium=shortcut" className="p-3 bg-navy-light rounded-full text-white hover:text-teal transition-colors" aria-label="Twitter">
-                <Twitter size={20} />
-              </a>
+            <div className="pt-6">
+                <p className="text-slate mb-4 text-sm font-medium uppercase tracking-wide">Connect with me</p>
+                <div className="flex space-x-4">
+                <a href="https://github.com/ayushgupta010" className="p-3 bg-navy rounded-full text-slate-lightest hover:bg-blue hover:text-white transition-all transform hover:-translate-y-1" aria-label="GitHub">
+                    <Github size={20} />
+                </a>
+                <a href="https://linkedin.com/in/ayush-guptaa0001/" className="p-3 bg-navy rounded-full text-slate-lightest hover:bg-blue hover:text-white transition-all transform hover:-translate-y-1" aria-label="LinkedIn">
+                    <Linkedin size={20} />
+                </a>
+                <a href="https://x.com/home?utm_source=homescreen&utm_medium=shortcut" className="p-3 bg-navy rounded-full text-slate-lightest hover:bg-blue hover:text-white transition-all transform hover:-translate-y-1" aria-label="Twitter">
+                    <Twitter size={20} />
+                </a>
+                </div>
             </div>
           </div>
           
           <form 
             onSubmit={handleSubmit}
             className={cn(
-              "space-y-6 bg-navy-light p-6 rounded-lg",
+              "space-y-6",
               isVisible ? "animate-fade-in" : "opacity-0"
             )}
             style={{ animationDelay: '400ms' }}
           >
             <div>
-              <label htmlFor="name" className="block mb-2 text-sm font-medium">Name</label>
+              <label htmlFor="name" className="block mb-2 text-sm font-medium text-slate-lightest">Name</label>
               <input
                 type="text"
                 id="name"
@@ -156,12 +182,13 @@ const ContactSection = () => {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-navy-dark border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal"
+                className="w-full px-4 py-3 bg-navy border border-navy-lighter rounded-md text-slate-lightest focus:outline-none focus:ring-2 focus:ring-blue focus:border-transparent transition-all placeholder:text-slate-dark"
+                placeholder="John Doe"
               />
             </div>
             
             <div>
-              <label htmlFor="email" className="block mb-2 text-sm font-medium">Email</label>
+              <label htmlFor="email" className="block mb-2 text-sm font-medium text-slate-lightest">Email</label>
               <input
                 type="email"
                 id="email"
@@ -169,12 +196,13 @@ const ContactSection = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-navy-dark border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal"
+                className="w-full px-4 py-3 bg-navy border border-navy-lighter rounded-md text-slate-lightest focus:outline-none focus:ring-2 focus:ring-blue focus:border-transparent transition-all placeholder:text-slate-dark"
+                placeholder="john@example.com"
               />
             </div>
             
             <div>
-              <label htmlFor="message" className="block mb-2 text-sm font-medium">Message</label>
+              <label htmlFor="message" className="block mb-2 text-sm font-medium text-slate-lightest">Message</label>
               <textarea
                 id="message"
                 name="message"
@@ -182,14 +210,15 @@ const ContactSection = () => {
                 onChange={handleChange}
                 required
                 rows={5}
-                className="w-full px-4 py-3 bg-navy-dark border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal"
+                className="w-full px-4 py-3 bg-navy border border-navy-lighter rounded-md text-slate-lightest focus:outline-none focus:ring-2 focus:ring-blue focus:border-transparent transition-all placeholder:text-slate-dark"
+                placeholder="Your message here..."
               />
             </div>
             
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-teal hover:bg-teal-dark text-navy font-medium py-3 rounded-md transition-colors flex items-center justify-center"
+              className="w-full bg-blue hover:bg-blue-hover text-white font-medium py-3 rounded-md transition-all shadow-lg shadow-blue/20 hover:shadow-blue/40 flex items-center justify-center transform hover:-translate-y-1"
             >
               {isSubmitting ? 'Sending...' : (
                 <>

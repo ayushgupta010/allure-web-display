@@ -48,54 +48,63 @@ const ProjectsSection = () => {
       ref={sectionRef}
       className="py-24 px-6"
     >
-      <div className="container max-w-5xl mx-auto">
+      <div className="container max-w-6xl mx-auto">
         <h2 className={cn(
           "section-heading",
           isVisible ? "animate-fade-in" : "opacity-0"
         )}>
           Featured Projects
+          <a href="#" className="ml-auto text-sm font-normal text-blue hover:underline hidden md:block">View All Projects →</a>
         </h2>
 
-        <div className="grid md:grid-cols-2 gap-8 mt-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
           {projects.map((project, idx) => (
             <div 
               key={project.title}
               className={cn(
-                "project-card group",
+                "group bg-[#112240] rounded-xl overflow-hidden shadow-xl transition-all duration-300 hover:-translate-y-2",
                 isVisible ? "animate-fade-in" : "opacity-0"
               )}
               style={{ animationDelay: `${idx * 150}ms` }}
             >
-              <div className="relative overflow-hidden">
-                <div className="absolute inset-0 bg-navy/80 opacity-0 group-hover:opacity-90 transition-opacity duration-300 flex items-center justify-center z-10">
-                  <div className="flex space-x-4">
-                    <a href={project.githubLink} className="p-3 bg-navy-light rounded-full text-white hover:text-teal transition-colors" aria-label="View Github Repository">
-                      <Github size={20} />
-                    </a>
-                    <a href={project.liveLink} className="p-3 bg-navy-light rounded-full text-white hover:text-teal transition-colors" aria-label="View Live Demo">
-                      <ExternalLink size={20} />
-                    </a>
-                  </div>
-                </div>
+              <div className="relative h-48 overflow-hidden bg-navy-lighter">
                 <img 
                   src={project.image}
                   alt={project.title}
-                  className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
-                <p className="text-muted-foreground mb-4">{project.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {project.technologies.map(tech => (
-                    <span key={tech} className="text-xs bg-secondary px-2 py-1 rounded-full">
+
+              <div className="p-6 flex flex-col h-[calc(100%-12rem)]">
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {project.technologies.slice(0, 3).map(tech => (
+                    <span key={tech} className="text-[10px] font-bold tracking-wider uppercase bg-blue/10 text-blue px-3 py-1 rounded-full">
                       {tech}
                     </span>
                   ))}
                 </div>
+
+                <h3 className="text-xl font-bold text-slate-lightest mb-2 group-hover:text-blue transition-colors">{project.title}</h3>
+                
+                <p className="text-slate text-sm leading-relaxed mb-6 line-clamp-3">{project.description}</p>
+                
+                <div className="mt-auto pt-4 flex items-center gap-6">
+                    <a href={project.liveLink} className="flex items-center gap-2 text-slate-lightest hover:text-blue transition-colors text-sm font-medium">
+                        <ExternalLink size={16} />
+                        Live Demo
+                    </a>
+                    <a href={project.githubLink} className="flex items-center gap-2 text-slate-lightest hover:text-blue transition-colors text-sm font-medium">
+                        <Github size={16} />
+                        GitHub
+                    </a>
+                </div>
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="mt-12 text-center md:hidden">
+          <a href="#" className="text-blue hover:underline font-medium">View All Projects →</a>
         </div>
       </div>
     </section>

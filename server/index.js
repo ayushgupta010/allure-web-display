@@ -66,14 +66,14 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Initialize Resend
+// Initialize Resend (only if API key is provided)
+let resend = null;
 if (!process.env.RESEND_API_KEY) {
   console.warn('⚠️  RESEND_API_KEY is not defined. Email sending will fail.');
 } else {
   console.log('✅ Resend API key loaded');
+  resend = new Resend(process.env.RESEND_API_KEY);
 }
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 // POST endpoint to receive messages
 app.post('/send-message', async (req, res) => {
@@ -93,10 +93,10 @@ app.post('/send-message', async (req, res) => {
     console.log('Recipient email:', process.env.RECIPIENT_EMAIL);
 
     // Validate environment variables
-    if (!process.env.RESEND_API_KEY) {
+    if (!resend) {
       return res.status(500).json({ 
         error: 'Server configuration error', 
-        details: 'RESEND_API_KEY is not defined in environment variables' 
+        details: 'RESEND_API_KEY is not defined in environment variables. Please add it to your Render environment variables.' 
       });
     }
     if (!process.env.RECIPIENT_EMAIL) {
@@ -126,11 +126,13 @@ ${message}
       });
       
       console.log('✅ Email sent successfully!');
-      console.log('Email ID:', emailResult.id);
+      console.log('Email result:', JSON.stringify(emailResult, null, 2));
+      
+      const emailId = emailResult?.data?.id || emailResult?.id || 'sent';
       
       res.status(200).json({ 
         message: 'Message sent successfully',
-        emailId: emailResult.id 
+        emailId: emailId 
       });
     } catch (emailError) {
       console.error('❌ ERROR SENDING EMAIL:');

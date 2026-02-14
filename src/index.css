@@ -7,33 +7,33 @@
 
 @layer base {
   :root {
-    --background: 210 33% 99%;
-    --foreground: 222 47% 11%;
+    --background: 222 47% 6%; /* #020c1b */
+    --foreground: 219 28% 88%; /* #ccd6f6 */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card: 217 33% 16%; /* #112240 */
+    --card-foreground: 219 28% 88%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover: 217 33% 16%;
+    --popover-foreground: 219 28% 88%;
 
-    --primary: 196 80% 50%;
+    --primary: 221 83% 53%; /* #2563eb Blue */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 217 19% 27%; /* #233554 Light Navy */
+    --secondary-foreground: 219 28% 88%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 217 19% 27%;
+    --muted-foreground: 219 14% 61%; /* #8892b0 */
 
-    --accent: 196 80% 50%;
-    --accent-foreground: 222 47% 11%;
+    --accent: 221 83% 53%;
+    --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 62% 30%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 222 84% 5%;
+    --border: 217 19% 27%;
+    --input: 217 19% 27%;
+    --ring: 221 83% 53%;
 
     --radius: 0.5rem;
   }
@@ -54,7 +54,7 @@
 
   /* Custom selection styling */
   ::selection {
-    @apply bg-teal text-navy;
+    @apply bg-blue text-navy-dark;
   }
 
   /* Custom scrollbar */
@@ -63,29 +63,29 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-navy-light;
+    @apply bg-navy;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-teal rounded-full;
+    @apply bg-slate-dark rounded-full;
   }
 }
 
 @layer components {
   .section-heading {
-    @apply text-2xl md:text-3xl font-bold text-foreground mb-4 flex items-center after:content-[''] after:flex-grow after:h-px after:ml-4 after:bg-border;
+    @apply text-2xl md:text-3xl font-bold text-slate-lightest mb-10 flex items-center after:content-[''] after:flex-grow after:h-px after:ml-6 after:bg-navy-lighter;
   }
 
   .nav-link {
-    @apply relative px-1 py-2 text-muted-foreground hover:text-foreground transition-colors after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-teal after:transition-all hover:after:w-full;
+    @apply relative px-1 py-2 text-slate hover:text-blue transition-colors font-mono text-sm;
   }
 
   .nav-link.active {
-    @apply text-foreground after:w-full;
+    @apply text-blue;
   }
 
   .project-card {
-    @apply relative bg-card rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-border;
+    @apply relative bg-navy-light rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-2;
   }
 
   .animated-bg {
@@ -94,20 +94,20 @@
 
   .animated-bg::before {
     content: '';
-    @apply absolute inset-0 bg-gradient-to-br from-navy to-navy-dark opacity-95 -z-10;
+    @apply absolute inset-0 bg-navy-dark -z-10;
   }
 
   .animated-bg::after {
     content: '';
-    @apply absolute inset-0 bg-[url('/grid-pattern.svg')] bg-center opacity-10 -z-10;
+    @apply absolute inset-0 bg-[url('/grid-pattern.svg')] bg-center opacity-5 -z-10;
   }
 
   .text-gradient {
-    @apply bg-gradient-to-r from-teal to-blue-400 bg-clip-text text-transparent;
+    @apply text-slate-lightest;
   }
 
   .typing-container {
-    @apply relative inline-block overflow-hidden border-r-2 border-primary whitespace-nowrap;
+    @apply relative inline-block overflow-hidden border-r-2 border-blue whitespace-nowrap;
     animation: typing 3.5s steps(40, end), blink 0.75s step-end infinite;
   }
 }
