@@ -9,36 +9,44 @@ const ProjectsSection = () => {
 
   const projects = [
     {
-      title: "E-commerce Platform",
+      title: "Spydee Clothing",
       description: "A full-stack e-commerce solution with shopping cart, payment processing, and admin dashboard.",
-      image: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&q=80&w=2000",
+      image: "/images/spydee_ss.png",
       technologies: ["React", "Node.js", "MongoDB", "Stripe"],
-      liveLink: "#",
-      githubLink: "#"
+      liveLink: "https://www.spydeeclothing.com/",
+      githubLink: "https://github.com/ayushgupta010/SpyEcom"
     },
     {
-      title: "Task Management App",
+      title: "AgroSync",
       description: "A productivity application with drag-and-drop task management, reminders, and team collaboration.",
-      image: "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80&w=2000",
+      image: "/images/agrosync_ss.png",
       technologies: ["TypeScript", "Redux", "Firebase", "Material UI"],
-      liveLink: "#",
+      liveLink: "https://agrosync-prototype.vercel.app/",
       githubLink: "#"
     },
     {
-      title: "Real Estate Website",
+      title: "Watch The Drop",
       description: "A property listing platform with search filters, virtual tours, and appointment scheduling.",
-      image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=2000",
+      image: "/images/watch_ss.png",
       technologies: ["Next.js", "TailwindCSS", "PostgreSQL", "Google Maps API"],
-      liveLink: "#",
+      liveLink: "https://watch-the-drop-seven.vercel.app/",
       githubLink: "#"
     },
     {
       title: "Weather Application",
       description: "A responsive weather app providing forecasts, radar maps, and severe weather alerts.",
-      image: "https://images.unsplash.com/photo-1530908295418-a12e326966ba?auto=format&fit=crop&q=80&w=2000",
+      image: "/images/weather_ss.png",
       technologies: ["React", "OpenWeather API", "Chart.js", "Styled Components"],
-      liveLink: "#",
-      githubLink: "#"
+      liveLink: "https://weather-one-tawny.vercel.app/",
+      githubLink: "https://github.com/ayushgupta010/weather"
+    },
+        {
+      title: "Foodie",
+      description: "A responsive weather app providing forecasts, radar maps, and severe weather alerts.",
+      image: "/images/foodie_ss.png",
+      technologies: ["React", "Styled Components"],
+      liveLink: "https://foodiee-kappa.vercel.app/",
+      githubLink: "https://github.com/ayushgupta010/weather"
     }
   ];
 
@@ -59,7 +67,7 @@ const ProjectsSection = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
           {projects.map((project, idx) => (
-            <div 
+            <div
               key={project.title}
               className={cn(
                 "group bg-[#112240] rounded-xl overflow-hidden shadow-xl transition-all duration-300 hover:-translate-y-2",
@@ -68,7 +76,7 @@ const ProjectsSection = () => {
               style={{ animationDelay: `${idx * 150}ms` }}
             >
               <div className="relative h-48 overflow-hidden bg-navy-lighter">
-                <img 
+                <img
                   src={project.image}
                   alt={project.title}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -85,18 +93,18 @@ const ProjectsSection = () => {
                 </div>
 
                 <h3 className="text-xl font-bold text-slate-lightest mb-2 group-hover:text-blue transition-colors">{project.title}</h3>
-                
+
                 <p className="text-slate text-sm leading-relaxed mb-6 line-clamp-3">{project.description}</p>
-                
+
                 <div className="mt-auto pt-4 flex items-center gap-6">
-                    <a href={project.liveLink} className="flex items-center gap-2 text-slate-lightest hover:text-blue transition-colors text-sm font-medium">
-                        <ExternalLink size={16} />
-                        Live Demo
-                    </a>
-                    <a href={project.githubLink} className="flex items-center gap-2 text-slate-lightest hover:text-blue transition-colors text-sm font-medium">
-                        <Github size={16} />
-                        GitHub
-                    </a>
+                  <a href={project.liveLink} className="flex items-center gap-2 text-slate-lightest hover:text-blue transition-colors text-sm font-medium">
+                    <ExternalLink size={16} />
+                    Live Demo
+                  </a>
+                  <a href={project.githubLink} className="flex items-center gap-2 text-slate-lightest hover:text-blue transition-colors text-sm font-medium">
+                    <Github size={16} />
+                    GitHub
+                  </a>
                 </div>
               </div>
             </div>
